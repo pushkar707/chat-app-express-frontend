@@ -8,7 +8,7 @@ export default function Home() {
     email: '',
     password: '',
     cpassword: '',
-    userName: '',
+    username: '',
   });
 
   const [error, setError] = useState({error:false,text:""})
@@ -40,7 +40,7 @@ export default function Home() {
   const saveUser = async(e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    const {password,cpassword,name,email,userName} = formValues
+    const {password,cpassword,name,email,username} = formValues
     if(password !== cpassword){
         return setError({error:true,text:"Passwords must be same"})
     }
@@ -51,7 +51,7 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({name,email,password,cpassword,userName}), // Replace with your data
+      body: JSON.stringify({name,email,password,cpassword,username}), // Replace with your data
     });
 
     const data = await response.json()
@@ -74,9 +74,9 @@ export default function Home() {
         </div>
 
         <div className='mb-4'>
-          <label htmlFor="userName" className="block text-sm font-medium leading-6 text-gray-900">Username</label>
+          <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">Username</label>
           <div className="relative mt-2 rounded-md shadow-sm">
-            <input value={formValues.userName} onChange={(e) => {handleChange(e); checkUserName(e);}} type="text" name="userName" id="userName" className="block w-full rounded-md border-0 py-2 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 placeholder:text-sm focus:ring-2 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6 text-sm" placeholder="Enter Your Username"/>
+            <input value={formValues.username} onChange={(e) => {handleChange(e); checkUserName(e);}} type="text" name="username" id="username" className="block w-full rounded-md border-0 py-2 px-2 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 placeholder:text-sm focus:ring-2 focus:ring-inset focus:ring-indigo-200 sm:text-sm sm:leading-6 text-sm" placeholder="Enter Your Username"/>
           </div>
         </div>
         

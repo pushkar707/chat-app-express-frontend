@@ -4,8 +4,8 @@ import getCookieValue from "@/app/utils/getCookieValue"
 import Image from "next/image"
 import {MouseEvent} from "react"
 
-function ChatCard({user,chat,setMessages}:{user:{name:string,username:string,email:string},chat:{chats:any[]} , setMessages: Function}) {
-  const {name,username,email} = user  
+function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName}:{user:{name:string,username:string,email:string,_id:string},chat:{chats:any[]} , setMessages: Function , setchatOpened:Function , setchatOpenedName:Function}) {
+  const {name,username,email,_id} = user  
   const connectChats = async(event: MouseEvent<HTMLDivElement>) => {
     const res = await fetch("http://localhost:8000/connect",{
       method:"POST",
@@ -21,9 +21,13 @@ function ChatCard({user,chat,setMessages}:{user:{name:string,username:string,ema
 
   const openChats = (event: MouseEvent<HTMLDivElement>) => {
     if(!chat.chats.length){
+      console.log("fsdfcersdcs");
+      
       connectChats(event)
     }
     setMessages(chat.chats)
+    setchatOpened(_id)
+    setchatOpenedName(name)
   }
 
 
