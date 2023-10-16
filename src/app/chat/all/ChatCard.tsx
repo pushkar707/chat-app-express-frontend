@@ -1,10 +1,21 @@
 "use client"
 
+import getCookieValue from "@/app/utils/getCookieValue"
 import Image from "next/image"
+import {MouseEvent} from "react"
 
-function ChatCard() {
-  const fetchChats = () => {
-    
+function ChatCard({username}:{username:string}) {
+  const fetchChats = async(event: MouseEvent<HTMLDivElement>) => {
+    const res = await fetch("http://localhost:8000/connect",{
+      method:"POST",
+      headers:{
+        'Content-Type': 'application/json',
+      },
+      body:JSON.stringify({userId: getCookieValue("userId"),username})
+    })
+
+    const data = await res.json()
+    console.log(data);    
   }
 
 

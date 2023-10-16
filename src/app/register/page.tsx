@@ -26,13 +26,7 @@ export default function Home() {
 
     if(value.length > 5){
       setError({error:false,text:""})
-      const response = await fetch('http://localhost:8000/username-check', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({userName:value}), // Replace with your data
-      });
+      const response = await fetch('http://localhost:8000/username-check/'+value);
   
       const data = await response.json()
       if(data.exists){

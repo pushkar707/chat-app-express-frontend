@@ -20,28 +20,26 @@ export default function Page() {
     const searchUserName = async (e:ChangeEvent<HTMLInputElement>) => {
         const username = e.target.value
         setSearch(true)
+        setSearchResult("")
 
         !username.length && setSearch(false)
         
         if(username.length > 5){
-            const response = await fetch("http://localhost:8000/username-check",{
-                method:"POST",
-                headers:{
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({userName:username})
-            })
-
+            const response = await fetch("http://localhost:8000/username-check/"+username)
 
             const data : {exists: Boolean , username: string} = await response.json()
             console.log(data);
             
             if(data.exists){
-                setSearchResult(data.username)
+                setSearchResult(username)                
             }else{
                 setSearchResult("")
             }
         }   
+    }
+
+    const getChats = async() => {
+        const res = await fetch("http://localhost:300")
     }
 
     return (
@@ -67,13 +65,13 @@ export default function Page() {
                     {search && <div className="bg-slate-700 text-xs text-center w-100 py-0.5 text-white">Search Results</div>}
 
                     {searchResult && <div>
-                        <ChatCard/>
+                        <ChatCard username={searchResult}/>
                     </div>}
 
                     {!search && <div>
-                        <ChatCard/>
-                        <ChatCard/>
-                        <ChatCard/>
+                        <ChatCard username={""}/>
+                        <ChatCard username={""}/>
+                        <ChatCard username={""}/>
                     </div>}
                 </div>
                 {/* Right Chat */}
