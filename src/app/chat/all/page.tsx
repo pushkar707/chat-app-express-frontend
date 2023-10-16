@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation"
-import { ChangeEvent , useEffect, useState } from "react"
+import { ChangeEvent , SetStateAction, useEffect, useState } from "react"
 import ChatCard from "./ChatCard"
 import getCookieValue from "@/app/utils/getCookieValue";
 import MessageCard from "./MessageCard";
@@ -12,34 +12,55 @@ export default function Page() {
         if(!userId){
             return redirect("/")
         }
+        getChats(userId)
+        setcurrentUserId(userId)
     }, [])
     
-    const [search, setSearch] = useState(false)
-    const [searchResult, setSearchResult] = useState("")
+    const [search, setSearch] = useState(false) // to check if user is currntly searching or not
+    const [searchResult, setSearchResult] = useState<any[]>([]) // Search results
+    const [people, setPeople] = useState<any[]>([]) // People with whom user has chats
+    const [messages, setMessages] = useState<any[]>([]) // FOR SINGLE CHAT
+    const [currentUserId, setcurrentUserId] = useState<string>("") // Current user id
 
     const searchUserName = async (e:ChangeEvent<HTMLInputElement>) => {
         const username = e.target.value
         setSearch(true)
-        setSearchResult("")
+        setSearchResult([])
 
         !username.length && setSearch(false)
         
         if(username.length > 5){
-            const response = await fetch("http://localhost:8000/username-check/"+username)
+            const response = await fetch("http://localhost:8000/username-search/"+username)
 
-            const data : {exists: Boolean , username: string} = await response.json()
+            const data : {exists: Boolean , users: [{_id : string,name:string,username:string}]} = await response.json()
             console.log(data);
+            console.log(people);
+            
             
             if(data.exists){
-                setSearchResult(username)                
+                let toReturnUser: {}[] = []
+                data.users.map(user => {
+                    let checkUserChats = false
+                    people.map(person => {
+                        if(person.user._id == user._id){
+                            toReturnUser.push({user,chat:person.chat})
+                            checkUserChats = true
+                        }
+                    })
+                    !checkUserChats && toReturnUser.push({user, chat: {chats: []}})
+                })
+                console.log(toReturnUser);                
+                setSearchResult(toReturnUser)                
             }else{
-                setSearchResult("")
+                setSearchResult([])
             }
         }   
     }
 
-    const getChats = async() => {
-        const res = await fetch("http://localhost:300")
+    const getChats = async(id:string) => {
+        const res = await fetch("http://localhost:8000/chats/"+id)
+        const data = await res.json()
+        setPeople(data.people)
     }
 
     return (
@@ -65,13 +86,19 @@ export default function Page() {
                     {search && <div className="bg-slate-700 text-xs text-center w-100 py-0.5 text-white">Search Results</div>}
 
                     {searchResult && <div>
-                        <ChatCard username={searchResult}/>
+                        {searchResult.map(user => {
+                            return (
+                                <ChatCard {...user}  setMessages={setMessages}/>
+                            )
+                        })}
                     </div>}
 
                     {!search && <div>
-                        <ChatCard username={""}/>
-                        <ChatCard username={""}/>
-                        <ChatCard username={""}/>
+                        {people.map(user => {
+                            return (
+                                <ChatCard {...user} setMessages={setMessages}/>
+                            )
+                        })}
                     </div>}
                 </div>
                 {/* Right Chat */}
@@ -84,7 +111,9 @@ export default function Page() {
                         </div>
                     </div>
                     <div className="flex flex-col-reverse p-3 pb-1">
-                        <MessageCard/>
+                        {messages.map(message => {
+                            return <MessageCard {...message}/>
+                        })}
                     </div>
                 </div>
             </div>
