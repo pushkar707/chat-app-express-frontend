@@ -7,6 +7,9 @@ import getCookieValue from "@/app/utils/getCookieValue";
 import MessageCard from "./MessageCard";
 import Image from "next/image";
 
+// Socket io imports
+import { socket } from '../../utils/socket';
+
 export default function Page() {
     useEffect(() => {
         const userId = getCookieValue("userId")
@@ -16,7 +19,7 @@ export default function Page() {
         getChats(userId)
         setcurrentUserId(userId)
     }, [])
-    
+
     const [search, setSearch] = useState(false) // to check if user is currntly searching or not
     const [searchResult, setSearchResult] = useState<any[]>([]) // Search results
     const [people, setPeople] = useState<any[]>([]) // People with whom user has chats
@@ -88,11 +91,31 @@ export default function Page() {
         })
 
         const data = await response.json()
-        console.log(data);
+
+        // Sockets
+        socket.emit("chatMsg",{sender:currentUserId,reciever:chatOpened});
+        // socket.emit("msg",messageTyped)
 
         // Setting UI to display the msg sent
-        setMessageTyped("")       
+        setMessages(data.chats)
+        setMessageTyped("")
     }
+
+    // socket.on("msg",(data)=> console.log(data));
+
+    socket.on(currentUserId,async(socketData) => {
+        console.log(socketData);      
+        
+        const res1 = await fetch(`http://localhost:8000/chats/${currentUserId}`)
+        const data1 = await res1.json()
+        setPeople(data1.people);
+        
+        setchatOpened(socketData.sender)
+        const res = await fetch(`http://localhost:8000/message/${socketData.sender}/${currentUserId}`)
+        const data = await res.json()
+        setchatOpenedName(data.name)
+        setMessages(data.chats)
+    })
 
     return (
         <main className="p-[2vh] w-screen min-h-screen" style={{ background: 'rgb(var(--background-start-rgb))' }}>
