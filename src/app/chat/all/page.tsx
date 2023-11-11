@@ -111,10 +111,14 @@ export default function Page() {
         setPeople(data1.people);
         
         setchatOpened(socketData.sender)
-        const res = await fetch(`http://localhost:8000/message/${socketData.sender}/${currentUserId}`)
-        const data = await res.json()
-        setchatOpenedName(data.name)
-        setMessages(data.chats)
+        try{
+            const res = await fetch(`http://localhost:8000/message/${socketData.sender}/${currentUserId}`)
+            const data = await res.json()
+            setchatOpenedName(data.name)
+            setMessages(data.chats)
+        }catch(e){
+            console.log(e);            
+        }
     })
 
     return (
