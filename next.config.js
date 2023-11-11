@@ -6,7 +6,8 @@ const nextConfig = {
                 hostname: "static.vecteezy.com"
             }
         ]
-    }
+    },
+    
 }
 
 module.exports = nextConfig

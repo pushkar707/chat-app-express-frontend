@@ -129,8 +129,8 @@ export default function Page() {
                     <div className="relative mt-1 overflow-hidden w-full">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             {/* Hamburger Icon */}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                             </svg>
                         </div>
                         <input type="text" onChange={searchUserName} name="price" id="price" autoComplete="false" className="pl-14 w-full p-3 text-sm border-l border-slate-400 border-opacity-30 outline-none" placeholder="Search for People" />
@@ -146,7 +146,7 @@ export default function Page() {
                     {searchResult && <div>
                         {searchResult.map(user => {
                             return (
-                                <ChatCard {...user}  setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName}/>
+                                <ChatCard key={user._id} {...user}  setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName}/>
                             )
                         })}
                     </div>}
@@ -154,7 +154,7 @@ export default function Page() {
                     {!search && <div>
                         {people.map(user => {
                             return (
-                                <ChatCard {...user} setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName} />
+                                <ChatCard key={user._id} {...user} setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName} />
                             )
                         })}
                     </div>}
@@ -170,7 +170,7 @@ export default function Page() {
                     </form> : ""}
                     <div className="flex flex-col-reverse p-3 pb-1 overflow-y-scroll no-scrollbar mt-14">
                         {messages.map(message => {
-                            return <MessageCard {...message}/>
+                            return <MessageCard key={message._id} {...message}/>
                         })}
                     </div>
                     {/* Chat descrption */}
