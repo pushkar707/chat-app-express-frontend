@@ -9,6 +9,7 @@ import Image from "next/image";
 
 // Socket io imports
 import { socket } from '../../utils/socket';
+import MessageInput from "./MessageInput";
 
 export default function Page() {
     useEffect(() => {
@@ -80,32 +81,10 @@ export default function Page() {
     }
 
     // To send Message
-    const sendMsg = async (event: MouseEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const response = await fetch("http://localhost:8000/message/send",{
-            method:"POST",
-            headers:{
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({sender:currentUserId,message:messageTyped,reciever:chatOpened})
-        })
 
-        const data = await response.json()
-
-        // Sockets
-        socket.emit("chatMsg",{sender:currentUserId,reciever:chatOpened});
-        // socket.emit("msg",messageTyped)
-
-        // Setting UI to display the msg sent
-        setMessages(data.chats)
-        setMessageTyped("")
-    }
-
-    // socket.on("msg",(data)=> console.log(data));
-
-    socket.on(currentUserId,async(socketData) => {
-        console.log(socketData);      
         
+    const getMessages = async (socketData:any) => {
+        console.log(socketData);
         const res1 = await fetch(`http://localhost:8000/chats/${currentUserId}`)
         const data1 = await res1.json()
         setPeople(data1.people);
@@ -117,9 +96,11 @@ export default function Page() {
             setchatOpenedName(data.name)
             setMessages(data.chats)
         }catch(e){
-            console.log(e);            
+            console.log(e);
         }
-    })
+    }       
+    
+    socket.once(currentUserId,getMessages)
 
     return (
         <main className="p-[2vh] w-screen min-h-screen" style={{ background: 'rgb(var(--background-start-rgb))' }}>
@@ -162,12 +143,7 @@ export default function Page() {
                 {/* Right Chat */}
                 <div className="flex-grow bg-slate-500 flex flex-col-reverse relative">
                     {/* Type Message Here Input */}
-                    {chatOpened ? <form className="relative mt-1 shadow-sm" onSubmit={sendMsg}>
-                        <input value={messageTyped} autoComplete="false" type="text" id="price" className="w-full p-3 text-sm border-l border-slate-400 border-opacity-30 outline-none" placeholder="Enter your Message" onChange={(e) => setMessageTyped(e.target.value)} />
-                        <div className="absolute inset-y-0 right-[-1px] flex items-center overflow-hidden">
-                            <button className="text-sm border p-6 pl-4 bg-green-500 text-white">Send</button>
-                        </div>
-                    </form> : ""}
+                    {chatOpened ? <MessageInput messageTyped={messageTyped} setMessageTyped={setMessageTyped} currentUserId={currentUserId} chatOpened={chatOpened} setMessages={setMessages} socket={socket} /> : ""}
                     <div className="flex flex-col-reverse p-3 pb-1 overflow-y-scroll no-scrollbar mt-14">
                         {messages.map(message => {
                             return <MessageCard key={message._id} {...message}/>
@@ -182,4 +158,8 @@ export default function Page() {
             </div>
         </main>
     )
+}
+
+function useEffectEvent(arg0: () => void) {
+    throw new Error("Function not implemented.");
 }
