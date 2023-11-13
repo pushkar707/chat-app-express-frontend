@@ -1,5 +1,8 @@
 import React, { useEffect, useReducer , useState , useRef} from 'react'
 import Image from "next/image"
+import {ChangeEvent} from "react"
+import uploadFileToS3 from '@/app/utils/uploadS3'
+import AWSKeyToUrl from '@/app/utils/AWSKeyToUrl'
 
 // enum CountActionKind {
 //     INCREASE = 'INCREASE',
@@ -42,11 +45,11 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
 
             case "REMOVE_IMAGE":
                 return {...state,imageUrl:defaultImage}
-            }
-
-
+            
+            case "ADD_IMAGE":
+                return {...state,imageUrl:action.imageUrl}
         }
-
+    }
     const [user, dispatch] = useReducer(reducer, { id:"", imageUrl:"", name:"", username: "", email:"" });
     const [changeusername, setchangeusername] = useState(false)
 
@@ -96,7 +99,7 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
                 headers:{
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id: currentUserId, profileImageKey:""})
+                body: JSON.stringify({id: currentUserId, imageUrl:""})
             })
             
             const data = await res.json()
@@ -104,6 +107,30 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
             if(data.result){
                 dispatch({type:"REMOVE_IMAGE"})
             }        
+        }
+    }
+
+    const addImageDb = async(e:ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        const file = e.target.files && e.target.files[0]
+
+        if(file){
+            const key = await uploadFileToS3(file)
+            // @ts-ignore
+            const imageUrl = AWSKeyToUrl(key)
+            const res = await fetch("http://localhost:8000/profile/change",{
+                method: "POST",
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({id: currentUserId, imageUrl})
+            })
+            
+            const data = await res.json()
+            console.log(data);
+            if(data.result){
+                dispatch({type:"ADD_IMAGE",imageUrl})
+            }
         }
     }
     
@@ -123,7 +150,8 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
             <div className='relative w-fit mb-3 mx-auto flex justify-center transition-all'>
                 <Image ref={profileImageRef} src={user.imageUrl} width={200} height={200} className='border cursor-pointer rounded-full mx-auto block' alt=':'/>
                 <div className='cursor-pointer w-[200px] h-[200px] transition-all rounded-full absolute bg-black opacity-0 hover:opacity-70 flex self-center flex-col  justify-between items-center'>
-                    <p className={`${usingdefaultImage && "!h-full"} text-sm text-white h-[50%] w-full hover:scale-110 flex items-center justify-center`}>Add Image</p>
+                    <label htmlFor="profileImageInput" className={`${usingdefaultImage && "!h-full"} cursor-pointer text-sm text-white h-[50%] w-full hover:scale-110 flex items-center justify-center`} >Add Image</label>
+                    <input type="file" accept="image/*" className='hidden' id='profileImageInput' onChange={addImageDb}/>
                     {!usingdefaultImage ? <p className="text-sm text-white h-[50%] w-full hover:scale-110 flex items-center justify-center" onClick={removeImageDb}>Remove Image</p>: ""}
                 </div>
             </div>

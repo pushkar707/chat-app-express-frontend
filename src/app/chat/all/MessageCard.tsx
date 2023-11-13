@@ -1,6 +1,7 @@
 import getCookieValue from '@/app/utils/getCookieValue'
 import React, { useEffect, useState } from 'react'
 import Image from "next/image";
+import AWSKeyToUrl from '@/app/utils/AWSKeyToUrl';
 
 function MessageCard({message,sender,time,senderId,awsFileKey,awsFileType}:{message:string,sender:any,time:string,senderId:string,awsFileKey:string,awsFileType:string}) { 
   const [senderMessage, setsenderMessage] = useState(false)
@@ -13,9 +14,9 @@ function MessageCard({message,sender,time,senderId,awsFileKey,awsFileType}:{mess
       }
 
       if(awsFileKey){
-        const bucketName = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME
-        const bucketregion = process.env.NEXT_PUBLIC_AWS_REGION
-        setlink(`https://${bucketName}.s3.${bucketregion}.amazonaws.com/${awsFileKey}`)
+        // const bucketName = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME
+        // const bucketregion = process.env.NEXT_PUBLIC_AWS_REGION
+        setlink(AWSKeyToUrl(awsFileKey))
       }
 
 

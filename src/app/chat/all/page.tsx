@@ -30,6 +30,7 @@ export default function Page() {
     const [messageTyped, setMessageTyped] = useState<string>("") // Message types by sender
     const [chatOpened, setchatOpened] = useState<string>("") // Id of user whose chat is opened
     const [chatOpenedName, setchatOpenedName] = useState<string>("") //Name of user whose chat is opened
+    const [chatOpenedImageUrl, setchatOpenedImageUrl] = useState<string>("") //Name of user whose chat is opened
     const [showDrawer, setShowDrawer] = useState<boolean>(false)
 
     // To implement search
@@ -79,6 +80,7 @@ export default function Page() {
             setMessages(data.people[0].chat.chats)
             setchatOpened(data.people[0].user._id)
             setchatOpenedName(data.people[0].user.name)
+            setchatOpenedImageUrl(data.people[0].user.imageUrl)
         }
     }
         
@@ -93,6 +95,7 @@ export default function Page() {
             const res = await fetch(`http://localhost:8000/message/${socketData.sender}/${currentUserId}`)
             const data = await res.json()
             setchatOpenedName(data.name)
+            setchatOpenedImageUrl(data.imageUrl)
             setMessages(data.chats)
         }catch(e){
             console.log(e);
@@ -127,7 +130,7 @@ export default function Page() {
                     {searchResult && <div>
                         {searchResult.map(user => {
                             return (
-                                <ChatCard key={user._id} {...user}  setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName}/>
+                                <ChatCard key={user._id} {...user} setchatOpenedImageUrl={setchatOpenedImageUrl}  setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName}/>
                             )
                         })}
                     </div>}
@@ -135,7 +138,7 @@ export default function Page() {
                     {!search && <div>
                         {people.map(user => {
                             return (
-                                <ChatCard key={user._id} {...user} setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName} />
+                                <ChatCard key={user._id} {...user} setchatOpenedImageUrl={setchatOpenedImageUrl} setMessages={setMessages} setchatOpened={setchatOpened} setchatOpenedName={setchatOpenedName} />
                             )
                         })}
                     </div>}
@@ -151,7 +154,7 @@ export default function Page() {
                     </div>
                     {/* Chat descrption */}
                     <div className="absolute h-14 w-full bg-white top-0 px-5 py-3 flex items-center">
-                        <Image className="mr-2" src="https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg" alt="" width="30" height="30" />
+                        <Image className="mr-2 border rounded-full" src={chatOpenedImageUrl} alt="" width="30" height="30" />
                         <p className="text-sm mx-1">{chatOpenedName}</p>
                     </div>
                 </div>

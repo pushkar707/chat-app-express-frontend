@@ -4,8 +4,8 @@ import getCookieValue from "@/app/utils/getCookieValue"
 import Image from "next/image"
 import {MouseEvent} from "react"
 
-function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName}:{user:{name:string,username:string,email:string,_id:string},chat:{chats:any[]} , setMessages: Function , setchatOpened:Function , setchatOpenedName:Function}) {
-  const {name,username,email,_id} = user  
+function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName,setchatOpenedImageUrl}:{user:{name:string,username:string,email:string,_id:string,imageUrl:string},chat:{chats:any[]} , setMessages: Function , setchatOpened:Function , setchatOpenedName:Function , setchatOpenedImageUrl:Function}) {
+  const {name,username,email,_id, imageUrl} = user  
   const connectChats = async(event: MouseEvent<HTMLDivElement>) => {
     const res = await fetch("http://localhost:8000/connect",{
       method:"POST",
@@ -28,6 +28,7 @@ function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName}:{user:
     setMessages(chat.chats)
     setchatOpened(_id)
     setchatOpenedName(name)
+    setchatOpenedImageUrl(imageUrl)
   }
 
   let cardCaption:string = ""
@@ -45,7 +46,7 @@ function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName}:{user:
 
   return (
     <div className="p-4 border-b border-b-slate-500 border-opacity-40 flex items-center cursor-pointer" onClick={openChats}>
-        <Image className="mr-2" src="https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg" alt="" width="55" height="55" />
+        <Image className="mr-2 border rounded-full" src={imageUrl} alt="" width="55" height="55" />
         <div>
             <p className="text-sm mb-1">{name}</p>
             <p className="text-xs">{cardCaption}</p>
