@@ -8,6 +8,9 @@ const nextConfig = {
             },
             {
                 hostname:"chat-app-files-pushkar.s3.ap-south-1.amazonaws.com"
+            },
+            {
+                hostname: "img.icons8.com/"
             }
         ]
     },

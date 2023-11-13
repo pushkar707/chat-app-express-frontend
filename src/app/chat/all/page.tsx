@@ -10,6 +10,7 @@ import Image from "next/image";
 // Socket io imports
 import { socket } from '../../utils/socket';
 import MessageInput from "./MessageInput";
+import Drawer from "./Drawer";
 
 export default function Page() {
     useEffect(() => {
@@ -29,6 +30,7 @@ export default function Page() {
     const [messageTyped, setMessageTyped] = useState<string>("") // Message types by sender
     const [chatOpened, setchatOpened] = useState<string>("") // Id of user whose chat is opened
     const [chatOpenedName, setchatOpenedName] = useState<string>("") //Name of user whose chat is opened
+    const [showDrawer, setShowDrawer] = useState<boolean>(false)
 
     // To implement search
     const searchUserName = async (e:ChangeEvent<HTMLInputElement>) => {
@@ -79,9 +81,6 @@ export default function Page() {
             setchatOpenedName(data.people[0].user.name)
         }
     }
-
-    // To send Message
-
         
     const getMessages = async (socketData:any) => {
         console.log(socketData);
@@ -104,11 +103,12 @@ export default function Page() {
 
     return (
         <main className="p-[2vh] w-screen min-h-screen" style={{ background: 'rgb(var(--background-start-rgb))' }}>
+            <Drawer setShowDrawer={setShowDrawer} showDrawer={showDrawer} currentUserId={currentUserId} />
             <div className="w-full h-[96vh] flex border border-slate-400 border-opacity-30 rounded-xl overflow-hidden">
                 {/* Left chats option */}
                 <div className="w-full sm:w-[50%] md:w-[40%] xl:w-[30%] bg-slate-50">
                     <div className="relative mt-1 overflow-hidden w-full">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <div onClick={() => setShowDrawer(true)} className="cursor-pointer absolute inset-y-0 left-0 flex items-center pl-3">
                             {/* Hamburger Icon */}
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
