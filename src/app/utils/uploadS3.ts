@@ -1,4 +1,3 @@
-
 import AWS from 'aws-sdk';
 
 AWS.config.update({
@@ -29,15 +28,19 @@ const uploadFileToS3 = (file: File) => {
     };
 
     // Upload the file to S3
-    // @ts-ignore
-    s3.upload(params, (err: any, data: any) => {
-        if (err) {
-            console.error('Error uploading file to S3:', err);
-        } else {
-            console.log('File uploaded successfully:', data.Location);
-            // You can save the S3 URL or perform additional actions here
-        }
-    });
+    return new Promise((resolve, reject) => {
+        // @ts-ignore
+        s3.upload(params, (err: any, data: any) => {
+            if (err) {
+                console.error('Error uploading file to S3:', err);
+                reject(err)
+            } else {
+                console.log('File uploaded successfully:', data.Location);
+                // You can save the S3 URL or perform additional actions here
+                resolve(key)
+            }
+        });
+    })
 };
 
 export default uploadFileToS3;

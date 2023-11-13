@@ -30,13 +30,25 @@ function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName}:{user:
     setchatOpenedName(name)
   }
 
+  let cardCaption:string = ""
+
+  if(chat.chats.length){
+    if( chat.chats[0].message)
+      cardCaption = chat.chats[0].message
+    else{
+      const keySplit: Array<string> =  chat.chats[0].awsFileKey.split(".")
+      keySplit[keySplit.length - 1] = keySplit[keySplit.length - 1].slice(0,keySplit[keySplit.length-1].indexOf("1" || "2"))
+      cardCaption = keySplit.join(".")
+    }
+  }
+
 
   return (
     <div className="p-4 border-b border-b-slate-500 border-opacity-40 flex items-center cursor-pointer" onClick={openChats}>
         <Image className="mr-2" src="https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg" alt="" width="55" height="55" />
         <div>
             <p className="text-sm mb-1">{name}</p>
-            {chat.chats.length ? <p className="text-xs">{chat.chats[0].message}</p> : ""}
+            <p className="text-xs">{cardCaption}</p>
         </div>
     </div>
   )
