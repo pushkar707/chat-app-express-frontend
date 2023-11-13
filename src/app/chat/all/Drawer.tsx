@@ -17,17 +17,31 @@ import Image from "next/image"
 //     count: number;
 //   }
 
+const defaultImage = "https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg"
+
 function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function,showDrawer:boolean, currentUserId: string}) {
 
+    const [usingdefaultImage, setUsingdDefaultImage] = useState(false)
     function reducer(state:any, action: any) : any {
         const { type, payload } = action;
         
         switch (type) {
             case "SET_VALUES":
-                return {...action.user}
+                let imageUrl:string=""
+                if(action.user.imageUrl.length){
+                    imageUrl = action.user.imageUrl
+                }else{
+                    imageUrl =  defaultImage
+                    setUsingdDefaultImage(true)
+                }
+
+                return {...action.user, imageUrl}
                 
-                case"USERNAME_CHANGE":
-                    return {...state,username: action.username}
+            case "USERNAME_CHANGE":
+                return {...state,username: action.username}
+
+            case "REMOVE_IMAGE":
+                return {...state,imageUrl:defaultImage}
             }
 
 
@@ -69,9 +83,29 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
         const data = await res.json()
         console.log(data);
         setchangeusername(false)      
-    }
+    }     
     
-        
+    const profileImageRef = useRef(null)
+    
+    const removeImageDb = async () => {
+        if(window.confirm("Do you want to remove your profile image. You can add it later.")){
+            console.log("EFSdfxdxerdsfdexsdcdsfceds");
+            
+            const res = await fetch("http://localhost:8000/profile/change",{
+                method: "POST",
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({id: currentUserId, profileImageKey:""})
+            })
+            
+            const data = await res.json()
+            console.log(data);
+            if(data.result){
+                dispatch({type:"REMOVE_IMAGE"})
+            }        
+        }
+    }
     
   return (
     <div id="drawer-example" style={{ background: 'rgb(var(--background-start-rgb))' }} className={`py-[2vh] pl-[2vh] ${!showDrawer ? "-translate-x-full" : "translate-x-0"} fixed top-0 left-0 z-40 h-screen  overflow-y-auto transition-transform bg-white w-80 dark:bg-gray-800`}>
@@ -86,7 +120,13 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
                 <span className="sr-only">Close menu</span>
             </button>
                 
-            <Image src={user.imageUrl} width={200} height={200} className='rounded-full mx-auto block' alt='Profile image'/>
+            <div className='relative w-fit mb-3 mx-auto flex justify-center transition-all'>
+                <Image ref={profileImageRef} src={user.imageUrl} width={200} height={200} className='border cursor-pointer rounded-full mx-auto block' alt=':'/>
+                <div className='cursor-pointer w-[200px] h-[200px] transition-all rounded-full absolute bg-black opacity-0 hover:opacity-70 flex self-center flex-col  justify-between items-center'>
+                    <p className={`${usingdefaultImage && "!h-full"} text-sm text-white h-[50%] w-full hover:scale-110 flex items-center justify-center`}>Add Image</p>
+                    {!usingdefaultImage ? <p className="text-sm text-white h-[50%] w-full hover:scale-110 flex items-center justify-center" onClick={removeImageDb}>Remove Image</p>: ""}
+                </div>
+            </div>
             <p className='text-base text-center'>{user.name}</p>
 
             <div className='mt-8'>
