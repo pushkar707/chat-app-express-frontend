@@ -6,17 +6,13 @@ AWS.config.update({
     region: process.env.NEXT_PUBLIC_AWS_REGION,
 });
 
+const s3 = new AWS.S3();
 
+// Define the S3 bucket name and the key (file name) in the bucket
+const bucketName = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME;
 
-const uploadFileToS3 = (file: File) => {
-    console.log(process.env.NEXT_PUBLIC_AWS_ACCESS_KEY);
-    // Create an instance of the S3 class
-    const s3 = new AWS.S3();
+export const uploadFileToS3 = (file: File) => {
 
-    // Define the S3 bucket name and the key (file name) in the bucket
-    const bucketName = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME;
-    console.log(bucketName);
-    
     const key = file.name + Date.now();
 
     // Set up the parameters for the S3 upload
@@ -26,6 +22,7 @@ const uploadFileToS3 = (file: File) => {
         Body: file,
         ContentType: file.type,
     };
+    // Create an instance of the S3 class
 
     // Upload the file to S3
     return new Promise((resolve, reject) => {
@@ -43,4 +40,19 @@ const uploadFileToS3 = (file: File) => {
     })
 };
 
-export default uploadFileToS3;
+export const deleteFileFromS3 = (key: string) => {
+    const params = {
+        Bucket: bucketName,
+        Key: key,
+    };
+
+    // Delete the object
+    //   @ts-ignore
+    s3.deleteObject(params, function (err, data) {
+        if (err) {
+            console.error('Error deleting object:', err);
+        } else {
+            console.log('Object deleted successfully');
+        }
+    });
+}

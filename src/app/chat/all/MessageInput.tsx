@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from 'react'
 import { MouseEvent } from "react"
 import AWS from 'aws-sdk';
-import uploadFileToS3 from '@/app/utils/uploadS3';
+import {uploadFileToS3} from '@/app/utils/s3';
 
 const MessageInput = ({ messageTyped, setMessageType, currentUserId, chatOpened, socket, setMessages, setMessageTyped }: any) => {
 

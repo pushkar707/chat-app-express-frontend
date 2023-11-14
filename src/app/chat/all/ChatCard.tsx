@@ -46,7 +46,9 @@ function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName,setchat
 
   return (
     <div className="p-4 border-b border-b-slate-500 border-opacity-40 flex items-center cursor-pointer" onClick={openChats}>
-        <Image className="mr-2 border rounded-full" src={imageUrl} alt="" width="55" height="55" />
+        <a href={imageUrl} target="_blank">
+          <Image className="mr-2 border rounded-full" src={imageUrl} alt="" width="55" height="55" />
+        </a>
         <div>
             <p className="text-sm mb-1">{name}</p>
             <p className="text-xs">{cardCaption}</p>

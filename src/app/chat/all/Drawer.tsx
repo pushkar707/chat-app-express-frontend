@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer , useState , useRef} from 'react'
 import Image from "next/image"
 import {ChangeEvent} from "react"
-import uploadFileToS3 from '@/app/utils/uploadS3'
+import {deleteFileFromS3, uploadFileToS3} from '@/app/utils/s3'
 import AWSKeyToUrl from '@/app/utils/AWSKeyToUrl'
 
 // enum CountActionKind {
@@ -30,23 +30,23 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
         
         switch (type) {
             case "SET_VALUES":
-                let imageUrl:string=""
-                if(action.user.imageUrl.length){
-                    imageUrl = action.user.imageUrl
+                if(action.user.imageUrl !== defaultImage ){
+                    setUsingdDefaultImage(false)
                 }else{
-                    imageUrl =  defaultImage
                     setUsingdDefaultImage(true)
                 }
 
-                return {...action.user, imageUrl}
+                return {...action.user}
                 
             case "USERNAME_CHANGE":
                 return {...state,username: action.username}
 
             case "REMOVE_IMAGE":
+                setUsingdDefaultImage(true)
                 return {...state,imageUrl:defaultImage}
             
             case "ADD_IMAGE":
+                setUsingdDefaultImage(false)
                 return {...state,imageUrl:action.imageUrl}
         }
     }
@@ -67,6 +67,7 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
     }, [currentUserId])
 
     const usernameInputRef = useRef<HTMLInputElement | undefined>(null)
+    const profileImageRef = useRef(null)
 
     useEffect(() => {
         if (changeusername && usernameInputRef.current) {
@@ -74,36 +75,28 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
           }
     }, [changeusername])
 
-    const setUsernameDb = async() => {
-
+    const profileChangeRequest = async(body:{}) => {
         const res = await fetch("http://localhost:8000/profile/change",{
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({id:currentUserId,username:usernameInputRef.current?.value})
+            body: JSON.stringify(body)
         })
         const data = await res.json()
-        console.log(data);
+        return data;
+    } 
+
+    const setUsernameDb = async() => {
+        await profileChangeRequest({id:currentUserId,username:usernameInputRef.current?.value})
         setchangeusername(false)      
     }     
     
-    const profileImageRef = useRef(null)
     
     const removeImageDb = async () => {
-        if(window.confirm("Do you want to remove your profile image. You can add it later.")){
-            console.log("EFSdfxdxerdsfdexsdcdsfceds");
-            
-            const res = await fetch("http://localhost:8000/profile/change",{
-                method: "POST",
-                headers:{
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({id: currentUserId, imageUrl:""})
-            })
-            
-            const data = await res.json()
-            console.log(data);
+        if(window.confirm("Do you want to remove your profile image. You can add it later.")){            
+            const data = await profileChangeRequest({id: currentUserId, imageUrl:defaultImage})
+            // deleteFileFromS3()
             if(data.result){
                 dispatch({type:"REMOVE_IMAGE"})
             }        
@@ -118,16 +111,7 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
             const key = await uploadFileToS3(file)
             // @ts-ignore
             const imageUrl = AWSKeyToUrl(key)
-            const res = await fetch("http://localhost:8000/profile/change",{
-                method: "POST",
-                headers:{
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({id: currentUserId, imageUrl})
-            })
-            
-            const data = await res.json()
-            console.log(data);
+            const data = await profileChangeRequest({id: currentUserId, imageUrl})
             if(data.result){
                 dispatch({type:"ADD_IMAGE",imageUrl})
             }
