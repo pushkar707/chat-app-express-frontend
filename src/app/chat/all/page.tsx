@@ -11,15 +11,29 @@ import Image from "next/image";
 import { socket } from '../../utils/socket';
 import MessageInput from "./MessageInput";
 import Drawer from "./Drawer";
+import * as jwt from "jsonwebtoken"
 
 export default function Page() {
+    
     useEffect(() => {
-        const userId = getCookieValue("userId")
-        if(!userId){
+        const singInToken = getCookieValue("signInToken")
+        if(!singInToken){        
             return redirect("/")
         }
-        getChats(userId)
-        setcurrentUserId(userId)
+        if(process.env.NEXT_PUBLIC_JWT_SECRET){            
+            try{
+                jwt.verify(singInToken,process.env.NEXT_PUBLIC_JWT_SECRET, (err,decoded) => {
+                    if(decoded){
+                        // @ts-ignore
+                        const userId = decoded?.id
+                        getChats(userId)
+                        setcurrentUserId(userId)
+                    }
+                })
+            }catch(err){            
+                return redirect("/")
+            }
+        }
     }, [])
 
     const [search, setSearch] = useState(false) // to check if user is currntly searching or not

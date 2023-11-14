@@ -56,8 +56,7 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
     const getUserDetails = async () => {     
         if(currentUserId){
             const res = await fetch("http://localhost:8000/profile/"+currentUserId)
-            const data = await res.json()
-            console.log(data);        
+            const data = await res.json()    
             dispatch({type: "SET_VALUES", user:data.user})
         }
     }
