@@ -23,7 +23,7 @@ export default function Home() {
     
     const {email, password} = formValues
 
-    const response = await fetch('http://localhost:8000/login', {
+    const response = await fetch('process.env.NEXT_PUBLIC_API_DOMAIN/login', {
       method: 'POST',
       credentials:"include",
       headers: {

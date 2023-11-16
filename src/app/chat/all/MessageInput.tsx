@@ -24,7 +24,7 @@ const MessageInput = ({ messageTyped, setMessageType, currentUserId, chatOpened,
         }
         
         if (messageTyped.length || key.length) {
-            const response = await fetch("http://localhost:8000/message/send", {
+            const response = await fetch("process.env.NEXT_PUBLIC_API_DOMAIN/message/send", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

@@ -7,7 +7,7 @@ import {MouseEvent} from "react"
 function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName,setchatOpenedImageUrl}:{user:{name:string,username:string,email:string,_id:string,imageUrl:string},chat:{chats:any[]} , setMessages: Function , setchatOpened:Function , setchatOpenedName:Function , setchatOpenedImageUrl:Function}) {
   const {name,username,email,_id, imageUrl} = user  
   const connectChats = async(event: MouseEvent<HTMLDivElement>) => {
-    const res = await fetch("http://localhost:8000/connect",{
+    const res = await fetch("process.env.NEXT_PUBLIC_API_DOMAIN/connect",{
       method:"POST",
       headers:{
         'Content-Type': 'application/json',
