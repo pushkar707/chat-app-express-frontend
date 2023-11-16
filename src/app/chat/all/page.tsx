@@ -56,7 +56,7 @@ export default function Page() {
         !username.length && setSearch(false)
         
         if(username.length > 5){
-            const response = await fetch("process.env.NEXT_PUBLIC_API_DOMAIN/username-search/"+username)
+            const response = await fetch(process.env.NEXT_PUBLIC_API_DOMAIN+"/username-search/"+username)
 
             const data : {exists: Boolean , users: [{_id : string,name:string,username:string}]} = await response.json()            
 
@@ -85,7 +85,7 @@ export default function Page() {
 
     // to get all the people user has chats with
     const getChats = async(id:string) => {
-        const res = await fetch("process.env.NEXT_PUBLIC_API_DOMAIN/chats/"+id)
+        const res = await fetch(process.env.NEXT_PUBLIC_API_DOMAIN+"/chats/"+id)
         const data = await res.json()
         setPeople(data.people)
 
@@ -100,13 +100,13 @@ export default function Page() {
         
     const getMessages = async (socketData:any) => {
         console.log(socketData);
-        const res1 = await fetch(`process.env.NEXT_PUBLIC_API_DOMAIN/chats/${currentUserId}`)
+        const res1 = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/chats/${currentUserId}`)
         const data1 = await res1.json()
         setPeople(data1.people);
         
         setchatOpened(socketData.sender)
         try{
-            const res = await fetch(`process.env.NEXT_PUBLIC_API_DOMAIN/message/${socketData.sender}/${currentUserId}`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/message/${socketData.sender}/${currentUserId}`)
             const data = await res.json()
             setchatOpenedName(data.name)
             setchatOpenedImageUrl(data.imageUrl)

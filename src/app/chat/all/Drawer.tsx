@@ -55,7 +55,7 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
 
     const getUserDetails = async () => {     
         if(currentUserId){
-            const res = await fetch("process.env.NEXT_PUBLIC_API_DOMAIN/profile/"+currentUserId)
+            const res = await fetch(process.env.NEXT_PUBLIC_API_DOMAIN+"/profile/"+currentUserId)
             const data = await res.json()    
             dispatch({type: "SET_VALUES", user:data.user})
         }
@@ -75,7 +75,7 @@ function Drawer({setShowDrawer,showDrawer,currentUserId}:{setShowDrawer:Function
     }, [changeusername])
 
     const profileChangeRequest = async(body:{}) => {
-        const res = await fetch("process.env.NEXT_PUBLIC_API_DOMAIN/profile/change",{
+        const res = await fetch(process.env.NEXT_PUBLIC_API_DOMAIN+"/profile/change",{
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',

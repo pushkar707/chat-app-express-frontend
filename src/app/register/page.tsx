@@ -26,7 +26,7 @@ export default function Home() {
 
     if(value.length > 5){
       setError({error:false,text:""})
-      const response = await fetch('process.env.NEXT_PUBLIC_API_DOMAIN/username-check/'+value);
+      const response = await fetch(process.env.NEXT_PUBLIC_API_DOMAIN+'/username-check/'+value);
   
       const data = await response.json()
       if(data.exists){
@@ -45,7 +45,7 @@ export default function Home() {
         return setError({error:true,text:"Passwords must be same"})
     }
 
-    const response = await fetch('process.env.NEXT_PUBLIC_API_DOMAIN/register', {
+    const response = await fetch(process.env.NEXT_PUBLIC_API_DOMAIN+'/register', {
       method: 'POST',
       credentials:"include",
       headers: {
