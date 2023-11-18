@@ -58,6 +58,8 @@ export default function Home() {
     if(data.error){
       setError({error:true,text:data.error})
     }else{
+      localStorage.setItem("signInToken",data.token)
+      localStorage.setItem("userId",data.id)
      window.location.href = "/chat/all"
     } 
   }

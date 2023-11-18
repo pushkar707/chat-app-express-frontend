@@ -12,7 +12,7 @@ function ChatCard({user,chat,setMessages,setchatOpened,setchatOpenedName,setchat
       headers:{
         'Content-Type': 'application/json',
       },
-      body:JSON.stringify({userId: getCookieValue("userId"),username})
+      body:JSON.stringify({userId: localStorage.getItem("userId"),username})
     })
 
     const data = await res.json()

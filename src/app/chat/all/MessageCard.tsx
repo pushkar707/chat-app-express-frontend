@@ -8,7 +8,7 @@ function MessageCard({message,sender,time,senderId,awsFileKey,awsFileType}:{mess
   const [cardCaption, setcardCaption] = useState("")
   const [link, setlink] = useState("")
   useEffect(() => {
-      const userId = getCookieValue("userId")
+      const userId = localStorage.getItem("userId")
       if(userId == senderId){
         setsenderMessage(true)
       }
