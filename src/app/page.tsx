@@ -36,7 +36,8 @@ export default function Home() {
     if(data.error){
       setError({error:true,text:data.error})
     }else{
-     window.location.href = "/chat/all"
+      localStorage.setItem("signInToken",data.token)
+      window.location.href = "/chat/all"
     } 
   }
   return (

@@ -10,20 +10,18 @@ import { socket } from '../../utils/socket';
 import MessageInput from "./MessageInput";
 import Drawer from "./Drawer";
 import * as jwt from "jsonwebtoken"
-import { useCookies } from "next-client-cookies";
 
 export default function Page() {
-
-    const cookies = useCookies()
     
     useEffect(() => {
-        const singInToken = cookies.get("signInToken")
-        if(!singInToken){        
+        const signInToken = localStorage.getItem("signInToken")
+        // const singInToken = getCookieValue("signInToken")
+        if(!signInToken || !signInToken.length){        
             return redirect("/")
         }
         if(process.env.NEXT_PUBLIC_JWT_SECRET){            
             try{
-                jwt.verify(singInToken,process.env.NEXT_PUBLIC_JWT_SECRET, (err,decoded) => {
+                jwt.verify(signInToken,process.env.NEXT_PUBLIC_JWT_SECRET, (err,decoded) => {
                     if(decoded){
                         // @ts-ignore
                         const userId = decoded?.id
