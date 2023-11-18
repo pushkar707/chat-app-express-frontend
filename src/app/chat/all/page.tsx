@@ -5,18 +5,19 @@ import { ChangeEvent , SetStateAction, useEffect, useState , MouseEvent } from "
 import ChatCard from "./ChatCard"
 import getCookieValue from "@/app/utils/getCookieValue";
 import MessageCard from "./MessageCard";
-import Image from "next/image";
-
-// Socket io imports
+import Image from "next/image"
 import { socket } from '../../utils/socket';
 import MessageInput from "./MessageInput";
 import Drawer from "./Drawer";
 import * as jwt from "jsonwebtoken"
+import { useCookies } from "next-client-cookies";
 
 export default function Page() {
+
+    const cookies = useCookies()
     
     useEffect(() => {
-        const singInToken = getCookieValue("signInToken")
+        const singInToken = cookies.get("signInToken")
         if(!singInToken){        
             return redirect("/")
         }
