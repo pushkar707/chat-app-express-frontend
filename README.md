@@ -18,4 +18,4 @@ This is a real-time chat application I build for practicing nextJS 13.2 NextJs 1
 - Secured with JWT (future plans for NextAuth)
 - Users can change avatar, username, etc
 - Well designed and tested chat interface
-- Fell free to use the application [https://chat-app-express-frontend.vercel.app](here) to see all features for yourself
+- Fell free to use the application [here](https://chat-app-express-frontend.vercel.app) to see all features for yourself
