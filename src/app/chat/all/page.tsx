@@ -115,7 +115,9 @@ export default function Page() {
         }
     }       
     
-    socket.once(currentUserId,getMessages)
+    useEffect(() => {
+        socket.on(currentUserId,getMessages)
+    },[currentUserId])
 
     return (
         <main className="p-[2vh] w-screen min-h-screen" style={{ background: 'rgb(var(--background-start-rgb))' }}>
